@@ -7,7 +7,7 @@ import tensorflow as tf
 from FLUID import FLUID
 
 inputs = tf.keras.Input(shape=(1, 1))
-# Apply the FLUID layer (custom Transformer-like block)
+
 x = FLUID(
     d_model=64,                 # Dimension of the model of LAN
     num_heads=16,               # Number of attention heads of LAN
@@ -23,6 +23,7 @@ x = FLUID(
     max_len=1000,               # Maximum sequence length of positional encoder
     return_attention=False,     # Return attention weights if True
 )(inputs)
+
 x = tf.keras.layers.Activation('sigmoid')(x)
 x = tf.keras.layers.Flatten()(x)
 outputs = tf.keras.layers.Dense(1)(x)
@@ -48,11 +49,11 @@ Training and evaluation on the XJTU-SY, HUST & PRONOSTIA dataset.
 python rul_pcm_kfold.py
 ```
 
-### 2. Run-Time
+### 2. RunTime
 
 Run-time experiment.
 
-* Code available in: `run_time/`
+* Code available in: `run_time_exp/`
 
 ```bash
 python run-time.py
