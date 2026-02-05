@@ -1,7 +1,7 @@
 # Flexible Unified Information Dynamics (FLUID)
 ---
-The repository contains the code of the FLUID transformer developed at Networked Intelligent Control (NIC) Lab at University of Science and Technology of China. 
-## FLUID Model Usage Example
+The repository contains the code of the FLUID transformer developed at Networked Intelligent Control (NIC) Lab at the University of Science and Technology of China. 
+## FLUID Model (Plug & Play) Usage Example
 ```python
 import tensorflow as tf
 from FLUID import FLUID
@@ -34,8 +34,26 @@ model.compile(
     metrics=['mae']
 )
 ```
+
+## Experiments
+
+
+### 1. RUL Est.
+
+Training and evaluation on the XJTU-SY, HUST & PRONOSTIA dataset.
+
+* Code available in: `rul_exps/`
+
+```bash
+python rul_pcm_kfold.py
 ```
 
+### 2. Run-Time
 
-    metrics=["mae"]
-)
+Run-time experiment.
+
+* Code available in: `run_time/`
+
+```bash
+python run-time.py
+```
