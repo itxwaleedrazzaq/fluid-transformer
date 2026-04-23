@@ -1,7 +1,9 @@
 # Flexible Unified Information Dynamics (FLUID)
 ---
 The repository contains the code of the FLUID transformer developed at Networked Intelligent Control (NIC) Lab at the University of Science and Technology of China. 
+
 ## FLUID Model (Plug & Play) Usage Example
+
 ```python
 import tensorflow as tf
 from FLUID import FLUID
@@ -13,6 +15,8 @@ x = FLUID(
     num_heads=16,               # Number of attention heads of LAN
     num_layers=1,               # Number of stacked encoder/decoder layers
     ff_dim=32,                  # Dimension of the feed-forward network
+    delta_t= 0.01,              # Time-step for the Liquid Attention
+    euler_steps=5,              # Number of Euler steps for Liquid Attention
     topk=8,                     # Number of top-k attention interactions
     expansion_rate=2,           # Expansion factor for feed-forward layers
     use_sink_gate=True,         # Enable sink gate mechanism
@@ -34,27 +38,49 @@ model.compile(
     loss='mse',
     metrics=['mae']
 )
+
 ```
 
 ## Experiments
 
 
-### 1. RUL Est.
+### 1. Irreguler Time-series.
 
-Training and evaluation on the XJTU-SY, HUST & PRONOSTIA dataset.
+Training and evaluation of Spiral and E-MNIST.
+
+* Code for Spiral available in: `Irregular_exp/Spiral_exp/`
+* Code for E-MNIST available in: `Irregular_exp/mnist_exp/`
+
+### 2. Long-Range Modeling (LRM).
+
+Training and evaluation of long-range modeling.
+
+* Code available in: `LRM_exps/`
+
+### 3. Lane-Keeping of Autonomous Vehicle.
+
+Training and evaluation of Autonomous-Vehicle lane-keeping.
+
+* Code for Udacity available in: `AVs_exps/Udacity_exp/`
+* Code for CarRacing available in: `AVs_exps/CarRacing_exp/`
+
+### 4. Learning Physical Dynamics.
+
+Learning of Physical dynamics modeling.
 
 * Code available in: `rul_exps/`
 
-```bash
-python rul_pcm_kfold.py
-```
+### 5. Key Hyperparameter Measure.
 
-### 2. RunTime
+Impact of key hyperparameters experiment.
 
-Run-time experiment.
+* Code available in: `Hyperparam_exp/`
+
+
+### 5. RunTime
+
+Run-time & memory experiment.
 
 * Code available in: `run_time_exp/`
 
-```bash
-python run-time.py
-```
+
