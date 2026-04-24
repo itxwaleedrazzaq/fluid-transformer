@@ -1,0 +1,15 @@
+einops==0.8.2
+gymnasium==1.2.3
+ipython==8.12.3
+keras==3.8.0
+matplotlib==3.10.8
+ncps==1.0.1
+numpy==2.4.4
+opencv_python==4.11.0.86
+opencv_python_headless==4.11.0.86
+pandas==3.0.2
+psutil==6.1.1
+scikit_learn==1.8.0
+scipy==1.17.1
+tensorflow==2.18.0
+tensorflow_probability==0.25.0
