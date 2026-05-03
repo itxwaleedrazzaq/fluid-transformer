@@ -27,7 +27,6 @@ TARGET_COL = 'OT'  # Oil Temperature
 
 def prepare_ettm1_data(file_path):
     df = pd.read_csv(file_path)
-    df = df.iloc[:25000]
     features = df.drop(columns=['date'])
     n_features = features.shape[1]
     n = len(features)
