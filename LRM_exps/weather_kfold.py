@@ -21,15 +21,14 @@ base_model_name = 'Jenna_climate'
 weights_dir = 'model_weights'
 
 # Jena Climate is sampled every 10 mins. 
-# 96 steps = 16 hours. We predict 192 steps (32 hours) ahead.
-LOOKBACK = 20      
-HORIZON = 20
+# 48 steps = 8 hours. We predict 24 steps = 6 hours ahead.
+LOOKBACK = 48      
+HORIZON = 24 
 TARGET_COL = 'T (degC)'  # temperature
 
 
 def prepare_weather_data(file_path):
     df = pd.read_csv(file_path)
-    df = df.iloc[:25000]
     features = df.drop(columns=['Date Time'])
     cols = [c for c in features.columns if c != TARGET_COL] + [TARGET_COL]
     features = features[cols]
@@ -155,7 +154,7 @@ def build_model(cell_type, input_shape=(LOOKBACK, n_feats), num_outputs=HORIZON)
         raise ValueError(f"Unknown cell type: {cell_type}")
 
     x = Activation('relu')(x)
-    out = Dense(num_outputs, activation='linear')(x)
+    out = Dense(num_outputs, activation='linear')(x) #predict all future steps at once
     return Model(inp, out)
 
 # Callbacks
@@ -174,15 +173,13 @@ def get_callbacks(model_name):
 # Model types
 model_types = [
     # "RNNCell", "LSTMCell", "GRUCell",
-    # "CTRNNCell","GRUODE", "PhasedLSTM","ODELSTM", 
-    # "LTCCell", 
-    # 'LTC-AutoNCP',
-    "CfCCell", 'CfC-AutoNCP','SSM', "S4", 
+    "GRUODE", "CTRNNCell", "PhasedLSTM","ODELSTM", 
+    "LTCCell", 'LTC-AutoNCP',"CfCCell", 'CfC-AutoNCP','SSM', "S4", 
     "SPDATransformer","linear_attention", "Perfomer",
     "mTAN", "odeformer", "contiformer", "CTA", 'OTTransformer', 'PDEAttention',
     "FLUID_residual", "FLUID_dynamicHC",
     "FLUID_staticHC",  #either resiudal or hyperconnections
-    "FLUID_Nosink",   #wSith/without sink gate
+    "FLUID_Nosink",   #with/without sink gate
     "FLUID_DHC_expansion2", "FLUID_DHC_expansion8",  #varying expansion rates
     "FLUID_SHC_expansion2", "FLUID_SHC_expansion8",  #varying expansion rates
     "FLUID_topk2", "FLUID_topk4",  #varying_topk
