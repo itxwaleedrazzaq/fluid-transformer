@@ -1,7 +1,5 @@
 import os
 os.environ['TF_USE_LEGACY_KERAS'] = '1'
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-
 
 import numpy as np
 import tensorflow as tf
@@ -21,12 +19,11 @@ from FLUID import FLUID
 base_model_name = 'ETTm1'
 weights_dir = 'model_weights'
 
-# Jena Climate is sampled every 10 mins. 
-# 96 steps = 16 hours. We predict 192 steps (32 hours) ahead.
-LOOKBACK = 20      
-HORIZON = 20
+# ETTm1 is sampled every 15 mins. 
+# 48 steps = 12 hours. We predict 24 steps (6 hours) ahead.
+LOOKBACK = 48      
+HORIZON = 24
 TARGET_COL = 'OT'  # Oil Temperature
-
 
 def prepare_ettm1_data(file_path):
     df = pd.read_csv(file_path)
@@ -34,8 +31,8 @@ def prepare_ettm1_data(file_path):
     features = df.drop(columns=['date'])
     n_features = features.shape[1]
     n = len(features)
-    train_df = features[:int(n*0.8)]
-    test_df = features[int(n*0.8):]
+    train_df = features[:int(n*0.9)]
+    test_df = features[int(n*0.9):]
 
     scaler = StandardScaler()
     scaler.fit(train_df)
@@ -59,7 +56,7 @@ wiring = FullyConnected(64)
 ncp_wiring = AutoNCP(units=64,output_size=5)
 
 # Model builder
-def build_model(cell_type, input_shape=(LOOKBACK, n_feats), num_classes=HORIZON):
+def build_model(cell_type, input_shape=(LOOKBACK, n_feats), num_outputs=HORIZON):
     inp = Input(shape=input_shape)
     if cell_type == "RNNCell":
         x = RNN(SimpleRNNCell(64), return_sequences=False)(inp)
@@ -152,7 +149,7 @@ def build_model(cell_type, input_shape=(LOOKBACK, n_feats), num_classes=HORIZON)
         raise ValueError(f"Unknown cell type: {cell_type}")
 
     x = Activation('relu')(x)
-    out = Dense(num_classes, activation='linear')(x)
+    out = Dense(num_outputs, activation='linear')(x) #predict all future steps at once
     return Model(inp, out)
 
 # Callbacks
@@ -170,12 +167,11 @@ def get_callbacks(model_name):
 
 # Model types
 model_types = [
-    # "RNNCell", "LSTMCell", "GRUCell",
-    # "GRUODE", "CTRNNCell", "PhasedLSTM","ODELSTM", 
-    # "LTCCell", 'LTC-AutoNCP',"CfCCell", 'CfC-AutoNCP','SSM', "S4", 
-    # "SPDATransformer","linear_attention", "Perfomer",
-    # "mTAN", "odeformer", "contiformer", "CTA", 'OTTransformer', 'PDEAttention',
-    # "FLUID_residual",
+    "GRUODE", "CTRNNCell", "PhasedLSTM","ODELSTM", 
+    "LTCCell", 'LTC-AutoNCP',"CfCCell", 'CfC-AutoNCP','SSM', "S4", 
+    "SPDATransformer","linear_attention", "Perfomer",
+    "mTAN", "odeformer", "contiformer", "CTA", 'OTTransformer', 'PDEAttention',
+    "FLUID_residual",
     "FLUID_dynamicHC",
     "FLUID_staticHC",  #either resiudal or hyperconnections
     "FLUID_Nosink",   #with/without sink gate
